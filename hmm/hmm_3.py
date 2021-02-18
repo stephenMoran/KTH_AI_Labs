@@ -49,10 +49,12 @@ def forward_alg(A, B, init, seq):
     scale_vec.append(sum_a0)
     to_rtn.append([el/sum_a0 for el in a0])
 
+    #print("Alpha scalato: ", to_rtn)
+
     #Evaluate a1 ... aT-1
     t=1
     for o in seq[1:]:
-        prev_a = to_rtn[t-1]
+        prev_a = to_rtn[-1]
         #Matrix multiplication
         a = []
         for i in range(N):
@@ -64,6 +66,7 @@ def forward_alg(A, B, init, seq):
         #Scale
         c = sum(a)
         scale_vec.append(c)
+        #print(f'Alpha a t={t}: ', [el/c for el in a])
         to_rtn.append([el/c for el in a])
         t += 1
 
@@ -77,34 +80,54 @@ def backward_alg(A,B, init, seq, scale_vec):
     t = len(seq)
 
     #Init bT
-    to_rtn.append([1/scale_vec[i] for i in range(N)])
+    to_rtn.append([1/scale_vec[-1] for i in range(N)])
+
+    #print("Primo beta scalato: ", to_rtn)
+
+
 
     t -= 1
-
+    t_max = len(seq)-1
     
-    for o in seq[:-1][::-1]:
+    o_prev = seq[-1]
+
+    for t in range(len(seq)-2, -1, -1):
+        prev_b = to_rtn[-1]
+        #init row b
+        b= []
+        for i in range(N):
+            sum_b = 0 #Init beta at time t for state i
+            for j in range(N):
+                sum_b = sum_b + A[i][j]*B[j][seq[t+1]]*prev_b[j]
+
+            b.append(sum_b)
+
+        #Scale before appending
+        c = scale_vec[t]
+        to_rtn.append([el/c for el in b])
+        #print(f'Beta a t={t}: ', [el/c for el in b])
+    
+    '''
+    for o, ind in enumerate(seq[:-1][::-1]):
         prev_b = to_rtn[-1] #Get last to_rtn element
         #Mult
         b=[]
         for i in range(N):
             sum_b = 0
             for j in range(N):
-                sum_b += prev_b[j]*B[j][o]*A[i][j]
+                sum_b += prev_b[j]*B[j][o_prev]*A[i][j]
 
-            
+            o_prev = o
             b.append(sum_b)
 
 
         #Scale before appending
         c = scale_vec[t]
         to_rtn.append([el/c for el in b])
-        '''
-        c = sum(b)
-        to_rtn.append([el/c for el in b])
-        '''
+        print(f'Beta a t={t}: ', [el/c for el in b])
 
         t-=1
-
+    '''
     return to_rtn[::-1]
 
 def compute_gammas(A, B, seq, alphas, betas):
@@ -203,11 +226,22 @@ print('B: ', B)
 print('Init: ', init)
 '''
 
-max_i = 300
+max_i = 100
 for i in range(max_i):
     alphas, scale_vec = forward_alg(A, B, init, seq)
     betas = backward_alg(A, B, init, seq, scale_vec)
+
+    #print(len(betas), len(betas[0]))
+
     di_gammas, gammas = compute_gammas(A, B, seq, alphas, betas)
+
+
+
+
+    '''
+    print('Gammas: ', gammas)
+    print('Alpha: ', alphas)
+    '''
 
     #print(gammas[0])
 
@@ -216,10 +250,23 @@ for i in range(max_i):
     A, B, init = re_estimate_param(A,B,init, di_gammas, gammas, seq)
 
 
-
+'''
 print('A: ', A)
 print('B: ', B)
 print('Init: ', init)
+'''
+
+
+print(len(A), len(A[0]), end=' ')
+for l in A:
+    print(*l, end=' ')
+
+print('')
+
+print(len(B), len(B[0]), end=' ')
+for l in B:
+    print(*l, end=' ')
+
 
 
 '''
