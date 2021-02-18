@@ -1,3 +1,5 @@
+import sys
+
 def div_chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i+n]
@@ -11,15 +13,24 @@ def build_matrix(line_in):
     to_rtn = list(div_chunks(line_in[2:], col))
     return to_rtn
 
+def get_lines():
+    lines = []
+    for line in sys.stdin:
+        lines.append(line)
+    return lines
 
-def read_input(filename):
+
+def read_input():
+    '''
     with open(filename, 'r') as f:
         lines = f.readlines()
-        #print('lines: ', lines[0])
-        A = build_matrix([float(n) for n in lines[0].split()])
-        B = build_matrix([float(n) for n in lines[1].split()])
-        init = build_matrix([float(n) for n in lines[2].split()])
-        seq = [int(n) for n in lines[3].split()[1:]]
+    '''
+    #print('lines: ', lines[0])
+    lines = get_lines()
+    A = build_matrix([float(n) for n in lines[0].split()])
+    B = build_matrix([float(n) for n in lines[1].split()])
+    init = build_matrix([float(n) for n in lines[2].split()])
+    seq = [int(n) for n in lines[3].split()[1:]]
 
     return A, B, init, seq
 
@@ -57,7 +68,7 @@ def forward_alg(A, B, init, seq):
 
 
 #Read the input
-A, B, init, seq = read_input('input.txt')
+A, B, init, seq = read_input()
 
 '''
 print('A: ', A)
@@ -68,8 +79,11 @@ print('Seq: ', seq)
 
 for_alg = forward_alg(A, B, init, seq)
 
-print(for_alg)
+#print(for_alg)
 #Sum probsabilities for the last alpha
-print('sum: ', sum(for_alg[-1]))
+#print('sum: ', sum(for_alg[-1]))
+
+#with open('output.txt')
+print(sum(for_alg[-1]))
 
 #Forward algorithm
