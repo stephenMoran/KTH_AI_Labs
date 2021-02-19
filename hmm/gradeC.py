@@ -1,4 +1,4 @@
-import sys
+import sys, math
 
 def div_chunks(l, n):
     for i in range(0, len(l), n):
@@ -17,14 +17,28 @@ def get_lines():
         lines.append(line)
     return lines
 
-def read_input():
+def read_seq():
     lines = get_lines()
-    A = build_matrix([float(n) for n in lines[0].split()])
-    B = build_matrix([float(n) for n in lines[1].split()])
-    init = build_matrix([float(n) for n in lines[2].split()])
-    seq = [int(n) for n in lines[3].split()[1:]]
+    seq_line = lines[0]
+    seq = [int(n) for n in seq_line.split()[1:]]
+    return seq
 
-    return A, B, init, seq
+def get_params(): 
+
+    """
+    Question 7
+    A = [[0.54, 0.26, 0.20], [0.19, 0.53, 0.2], [0.22, 0.18, 0.6]]
+    B = [[0.5, 0.2, 0.11, 0.19], [0.22, 0.28, 0.23, 0.27], [0.19, 0.21, 0.15, 0.45]]
+    init = [[0.3, 0.2, 0.5]]
+    """  
+    N = 
+    #Question 8
+    A = [[0.54, 0.26, 0.20], [0.19, 0.53, 0.2], [0.22, 0.18, 0.6]]
+    B = [[0.5, 0.2, 0.11, 0.19], [0.22, 0.28, 0.23, 0.27], [0.19, 0.21, 0.15, 0.45]]
+    init = [[0.3, 0.2, 0.5]]
+
+
+    return A, B, init
 
 #Forward algorithm
 def forward_alg(A, B, init, seq):
@@ -168,18 +182,36 @@ def re_estimate_param(A, B, init, di_gammas, gammas, seq):
     init_rtn = [init_rtn]
     return A_rtn, B_rtn, init_rtn
 
+
+def compute_log(scaler): 
+    log_prob = 0 
+    t = len(scaler)
+    for i in range(t): 
+        log_prob = log_prob + math.log(1/scaler[i])
+    return -log_prob
+
 #Read the input, init delta
-A, B, init, seq = read_input()
+A, B, init = get_params()
+seq = read_seq()
 
 max_i = 100
+old_log_prob = -math.inf
+
 for i in range(max_i):
     alphas, scale_vec = forward_alg(A, B, init, seq)
+    log_prob = compute_log(scale_vec)
+    print(log_prob)
+    if log_prob > old_log_prob: 
+        old_log_prob = log_prob
+    else: 
+        break
     betas = backward_alg(A, B, init, seq, scale_vec)
-
     di_gammas, gammas = compute_gammas(A, B, seq, alphas, betas)
 
     #Re-Estimate A, B. Pi
     A, B, init = re_estimate_param(A,B,init, di_gammas, gammas, seq)
+    print("iteration")
+    print(i)
 
 
 print(len(A), len(A[0]), end=' ')
