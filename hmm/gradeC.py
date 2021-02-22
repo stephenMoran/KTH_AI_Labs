@@ -24,19 +24,53 @@ def read_seq():
     return seq
 
 def get_params(): 
+    """
+    #Question 7
+    A = [[0.54, 0.26, 0.20], [0.19, 0.53, 0.2], [0.22, 0.18, 0.6]]
+    B = [[0.5, 0.2, 0.11, 0.19], [0.22, 0.28, 0.23, 0.27], [0.19, 0.21, 0.15, 0.45]]
+    init = [[0.3, 0.2, 0.5]]
 
     """
-    Question 7
-    A = [[0.54, 0.26, 0.20], [0.19, 0.53, 0.2], [0.22, 0.18, 0.6]]
-    B = [[0.5, 0.2, 0.11, 0.19], [0.22, 0.28, 0.23, 0.27], [0.19, 0.21, 0.15, 0.45]]
-    init = [[0.3, 0.2, 0.5]]
-    """  
-    N = 
-    #Question 8
-    A = [[0.54, 0.26, 0.20], [0.19, 0.53, 0.2], [0.22, 0.18, 0.6]]
-    B = [[0.5, 0.2, 0.11, 0.19], [0.22, 0.28, 0.23, 0.27], [0.19, 0.21, 0.15, 0.45]]
-    init = [[0.3, 0.2, 0.5]]
+    """
+    #Question 8 - neat uniform
+    A = [[0.40, 0.3, 0.3], [0.4, 0.3, 0.3], [0.4, 0.3, 0.3]]
+    B = [[0.2, 0.3, 0.35, 0.15], [0.2, 0.3, 0.35, 0.15], [0.2, 0.3, 0.35, 0.15]]
+    init = [[0.3, 0.3, 0.4]]
+    return A, B, init
+    """
+    """
+    #Question 9 
+    
+    # 2 states
+    A = [[0.7, 0.3], [0.7, 0.3], [0.7, 0.3]]
+    B = [[0.2, 0.3, 0.35, 0.15], [0.2, 0.3, 0.35, 0.15]]
+    init = [[0.3, 0.3]]
+    
+    # 4 states
+    A = [[0.40, 0.3, 0.2, 0.1], [0.4, 0.2, 0.3, 0.1], [0.4, 0.1, 0.3, 0.2], [0.4, 0.1, 0.3, 0.2]]
+    B = [[0.2, 0.3, 0.35, 0.15], [0.2, 0.3, 0.35, 0.15], [0.2, 0.3, 0.35, 0.15], [0.2, 0.3, 0.35, 0.15]]
+    init = [[0.3, 0.3, 0.3, 0.1]]
+    
+    """
 
+    #Question 10 
+    """
+    # Uniform distribution 
+    A = [[0.333, 0.333, 0.333], [0.333, 0.333, 0.333], [0.333, 0.333, 0.333]]
+    B = [[0.25, 0.25, 0.25, 0.25], [0.25, 0.25, 0.25, 0.25], [0.25, 0.25, 0.25, 0.25]]
+    init = [[0.333, 0.333, 0.333]]
+    """
+    """
+    #Diagonal 
+    A = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    B = [[0.5, 0.2, 0.11, 0.19], [0.22, 0.28, 0.23, 0.27], [0.19, 0.21, 0.15, 0.45]]
+    init = [[0.3, 0.2, 0.5]]
+    """
+
+    #Close to solution 
+    A = [[0.699, 0.041, 0.26], [0.099, 0.791, 0.11], [0.199, 0.291, 0.51]]
+    B = [[0.699, 0.201, 0.099, 0.001], [0.099, 0.391, 0.305, 0.205], [0.001, 0.099, 0.199, 0.701]]
+    init = [[0.3, 0.2, 0.5]]
 
     return A, B, init
 
@@ -85,7 +119,6 @@ def backward_alg(A,B, init, seq, scale_vec):
 
     #Init bT
     to_rtn.append([1/scale_vec[-1] for i in range(N)])
-
 
 
     t -= 1
@@ -190,17 +223,37 @@ def compute_log(scaler):
         log_prob = log_prob + math.log(1/scaler[i])
     return -log_prob
 
+#root square distance
+def distance(A, B, init): 
+    A_t = [[0.7, 0.05, 0.25], [0.1, 0.8, 0.1], [0.2, 0.3, 0.5]]
+    B_t = [[0.7, 0.2, 0.1, 0], [0.1, 0.4, 0.3, 0.2], [0, 0.1, 0.2, 0.7]]
+    i_t = [[1, 0, 0]]
+    d_a = 0
+    d_b = 0 
+    
+    #A distance
+    for i in range(len(A)): 
+        for j in range(len(A[0])): 
+            d_a += math.pow(A[i][j] - A_t[i][j], 2)
+    #B distance
+    for i in range(len(A)): 
+        for j in range(len(A[0])): 
+            d_b += math.pow(B[i][j] - B_t[i][j], 2)
+
+    print("\n\nDistance:\n")
+    print("A: ", math.sqrt(d_a))
+    print("B: ", math.sqrt(d_b))
+
 #Read the input, init delta
 A, B, init = get_params()
 seq = read_seq()
 
-max_i = 100
+max_i = 10000000000
 old_log_prob = -math.inf
 
 for i in range(max_i):
     alphas, scale_vec = forward_alg(A, B, init, seq)
     log_prob = compute_log(scale_vec)
-    print(log_prob)
     if log_prob > old_log_prob: 
         old_log_prob = log_prob
     else: 
@@ -210,7 +263,6 @@ for i in range(max_i):
 
     #Re-Estimate A, B. Pi
     A, B, init = re_estimate_param(A,B,init, di_gammas, gammas, seq)
-    print("iteration")
     print(i)
 
 
@@ -223,3 +275,12 @@ print('')
 print(len(B), len(B[0]), end=' ')
 for l in B:
     print(*l, end=' ')
+
+print('')
+
+print(len(init), end=' ')
+for i in init:
+    print(*i, end=' ')
+
+
+#distance(A,B,init)
