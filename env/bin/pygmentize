@@ -1,4 +1,6 @@
-#!/Users/stephenmoran/Documents/Code/AI_Labs/env/bin/python3
+#!/bin/sh
+'''exec' "/Users/stefanoperenzoni/Desktop/University/KTH - First year/Courses/Artificial Intelligence/Assignments/KTH_AI_Labs/env/bin/python3" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

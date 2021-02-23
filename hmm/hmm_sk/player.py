@@ -3,28 +3,17 @@
 from player_controller_hmm import PlayerControllerHMMAbstract
 from constants import *
 from baum_welch import bm_alg, guess_fw_alg
+import numpy as np
 import random
 
 class species_model:
     def __init__(self, N_states, N_obs):
-        #Init pi, A, B
-        #Uniform
-
-        '''
-        self.pi = [1/N_states for _ in range(N_states)]
-        self.A = [[1/N_states for _ in range(N_states)] for _ in range(N_states)]
-        self.B = [[1/N_states for _ in range(N_obs)] for _ in range(N_states)]
-        '''
-
-        self.init_A = self.init_semiuniform_matrix(N_states, N_states)
-        self.init_B = self.init_semiuniform_matrix(N_states, N_obs)
-        self.init_pi = self.init_semiuniform_matrix(1, N_states)[0]
+        #init mat A,B, pi
+        self.init_A = self.init_matrix(N_states, N_states)
+        self.init_B = self.init_matrix(N_states, N_obs)
+        self.init_pi = self.init_matrix(1, N_states)[0]
 
         self.A, self.B, self.pi = self.init_A, self.init_B, self.init_pi
-
-        #print(self.B)
-
-        #print(self.pi[0])
 
         self.fish_list = []
         self.obs_movements = []
@@ -32,25 +21,26 @@ class species_model:
         self.guess_reaady = False
 
     def init_matrix(self, n_row, n_col):
+        random.seed(42)
         to_rtn = []
         #Create a row with noise (list with n_col elements), then shuffle it n_row - 1 times
-        noise = n
+        #stoc_row = np.random.dirichlet(np.ones(n_col),size=1).tolist()[0]
+        #noise = np.random.uniform(-0.05, 0.05, n_col).tolist()
+        for i in range(n_row):
+            noise_row = [random.uniform(-0.050, 0.050) for _ in range(n_col-1)]
 
-    def init_semiuniform_matrix(self, row, col):
-        random.seed(30)
-        M = []
-        for i in range(row):
-            # make a uniform row
-            r = [1 / col for i in range(col)]
-            # generate some noise
-            noise = [random.uniform(-0.05, 0.05) for k in range(col - 1)]
-            # add/remove noise from the first n-1 elements
-            for j in range(col - 1):
-                r[j] = r[j] + noise[j]
-            # assign last element such that the sum of the row is 1
-            r[-1] = 1 - sum(r[:-1])
-            M.append(r)
-        return M
+        sum_noise = 0
+        stoc_row = []
+        for i in range(n_col-1):
+            stoc_row.append((1/n_col) + noise_row[i])
+            sum_noise += noise_row[i]
+        stoc_row.append((1/n_col) - sum_noise)
+
+        for i in range(n_row):
+            #Append to to_rtn a random shuffle of the row created previously
+            to_rtn.append(random.sample(stoc_row, n_col))
+
+        return to_rtn
 
 
 class my_fish:
@@ -68,7 +58,6 @@ class PlayerControllerHMM(PlayerControllerHMMAbstract):
         """
 
         #7 different models, 1 for each species
-        #2 different states
         #Try with 7 states
         self.hmm_models = [species_model(7, N_EMISSIONS) for i in range(N_SPECIES)]
 
@@ -88,14 +77,13 @@ class PlayerControllerHMM(PlayerControllerHMMAbstract):
         """
 
         # This code would make a random guess on each step:
-        # return (step % N_FISH, random.randint(0, N_SPECIES - 1))
 
         #For each fish, append the movement (observation) to its mov_lists (movements)
         for i in range(len(self.fish)):
             self.movements = self.fish[i].movements.append(observations[i])
 
         #If we still have time, return None
-        time_lim = 62
+        time_lim = 63
         if step < time_lim:
             return None
 
@@ -144,6 +132,7 @@ class PlayerControllerHMM(PlayerControllerHMMAbstract):
         mod_seq = self.hmm_models[true_type].obs_movements
 
         A,B,pi = self.hmm_models[true_type].init_A, self.hmm_models[true_type].init_B, self.hmm_models[true_type].init_pi
+        #A,B,pi = self.hmm_models[true_type].A, self.hmm_models[true_type].B, self.hmm_models[true_type].pi
 
         self.hmm_models[true_type].A, self.hmm_models[true_type].B, self.hmm_models[true_type].pi = bm_alg(A,B, pi, mod_seq, len(mod_seq))
         self.hmm_models[true_type].guess_reaady = True

@@ -1,4 +1,4 @@
-#!/Users/stephenmoran/Documents/Code/AI_Labs/env/bin/python3
+#!/Users/stefanoperenzoni/Desktop/University/KTH - First year/Courses/Artificial Intelligence/Assignments/KTH_AI_Labs/env/bin/python3
 
 # $Id: rst2latex.py 5905 2009-04-16 12:04:49Z milde $
 # Author: David Goodger <goodger@python.org>

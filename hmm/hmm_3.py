@@ -232,11 +232,7 @@ for i in range(max_i):
     betas = backward_alg(A, B, init, seq, scale_vec)
 
     #print(len(betas), len(betas[0]))
-
     di_gammas, gammas = compute_gammas(A, B, seq, alphas, betas)
-
-
-
 
     '''
     print('Gammas: ', gammas)
