@@ -1,4 +1,4 @@
-#!/Users/stephenmoran/Documents/Code/AI_Labs/env/bin/python3
+#!/Users/stefanoperenzoni/Desktop/University/KTH - First year/Courses/Artificial Intelligence/Assignments/KTH_AI_Labs/env/bin/python3
 
 # $Id: rst2xetex.py 7847 2015-03-17 17:30:47Z milde $
 # Author: Guenter Milde

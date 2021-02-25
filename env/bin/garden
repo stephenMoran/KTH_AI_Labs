@@ -1,4 +1,4 @@
-#!/Users/stephenmoran/Documents/Code/AI_Labs/env/bin/python3
+#!/Users/stefanoperenzoni/Desktop/University/KTH - First year/Courses/Artificial Intelligence/Assignments/KTH_AI_Labs/env/bin/python3
 
 import sys
 import argparse

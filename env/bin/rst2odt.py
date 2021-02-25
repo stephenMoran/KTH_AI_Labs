@@ -1,4 +1,4 @@
-#!/Users/stephenmoran/Documents/Code/AI_Labs/env/bin/python3
+#!/Users/stefanoperenzoni/Desktop/University/KTH - First year/Courses/Artificial Intelligence/Assignments/KTH_AI_Labs/env/bin/python3
 
 # $Id: rst2odt.py 5839 2009-01-07 19:09:28Z dkuhlman $
 # Author: Dave Kuhlman <dkuhlman@rexx.com>

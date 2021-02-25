@@ -1,4 +1,4 @@
-#!/Users/stephenmoran/Documents/Code/AI_Labs/env/bin/python3
+#!/Users/stefanoperenzoni/Desktop/University/KTH - First year/Courses/Artificial Intelligence/Assignments/KTH_AI_Labs/env/bin/python3
 
 # $Id: rst2pseudoxml.py 4564 2006-05-21 20:44:42Z wiemann $
 # Author: David Goodger <goodger@python.org>
