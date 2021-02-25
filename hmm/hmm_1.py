@@ -38,28 +38,33 @@ def read_input():
 #Forward algorithm
 def forward_alg(A, B, init, seq):
     #Evaluate a0
-    init = init[0]
-    N = len(init)
-    o_0 = seq[0]
-    a0 = []
-    to_rtn = []
+    init = init[0] #Get pi as list
+    N = len(init) #N number of states
+    o_0 = seq[0] #First observation
+    a0 = [] #Create list for alpha initialization
+    to_rtn = [] #Create alphas list
+
+    #Initialize alpha0
     for i in range(N):
         a0.append(init[i]*B[i][o_0])
 
-    to_rtn.append(a0)
+    to_rtn.append(a0) #Add alpha0 to the alpha list
 
     #Evaluate a1 ... aT-1
+    #Iterate over observations, excluding the first one
     t=1
     for o in seq[1:]:
-        prev_a = to_rtn[t-1]
-        #Matrix multiplication
+        prev_a = to_rtn[t-1] #Ger previous alpha
+        #Initialize alpha_o
         a = []
+        #Matrix multiplication
         for i in range(N):
             sum = 0
             for j in range(N):
-                sum += prev_a[j] * A[j][i]
-            a.append(sum*B[i][o])
+                sum += prev_a[j] * A[j][i] #Sum previous alpha for state j and transaction prob from j to i
+            a.append(sum*B[i][o]) #Multiply the sum by the probability of observation o in state i, and add it to the alpha_o list
         
+        #Add the alpha_o to the alphas
         to_rtn.append(a)
         t += 1
 
@@ -70,20 +75,10 @@ def forward_alg(A, B, init, seq):
 #Read the input
 A, B, init, seq = read_input()
 
-'''
-print('A: ', A)
-print('B: ', B)
-print('Init: ', init)
-print('Seq: ', seq)
-'''
-
+#Call the forward algorithm on params A, B, pi and seq
 for_alg = forward_alg(A, B, init, seq)
 
-#print(for_alg)
-#Sum probsabilities for the last alpha
-#print('sum: ', sum(for_alg[-1]))
-
-#with open('output.txt')
+#Print sum of the probabilities in the last alpha
 print(sum(for_alg[-1]))
 
 #Forward algorithm
