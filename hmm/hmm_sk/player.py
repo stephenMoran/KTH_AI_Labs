@@ -59,6 +59,7 @@ class PlayerControllerHMM(PlayerControllerHMMAbstract):
 
         #7 different models, 1 for each species
         #Try with 7 states
+        #The observation is given by the number of Emissions, 8
         self.hmm_models = [species_model(7, N_EMISSIONS) for i in range(N_SPECIES)]
 
         #List of fish to guess
@@ -97,12 +98,12 @@ class PlayerControllerHMM(PlayerControllerHMMAbstract):
         if step > time_lim:
             guess_id = self.fish[self.next_guess_f].fish_id
             self.next_guess_f += 1
-            #If model ready for guessing
+            #Initialise probability variables
             max_lik = 0
             max_index = -1
             for i in range(N_SPECIES):
                 cur_hmm = self.hmm_models[i]
-                if cur_hmm.guess_reaady:
+                if cur_hmm.guess_reaady: #If model ready for guessing
                     #Run FW and compare probs
                     new_lik = guess_fw_alg(cur_hmm.A, cur_hmm.B, cur_hmm.pi, self.fish[guess_id].movements)
                     if new_lik > max_lik:
@@ -121,8 +122,6 @@ class PlayerControllerHMM(PlayerControllerHMMAbstract):
         :param true_type: the correct type of the fish
         :return:
         """
-        #Add fish to its true model
-        self.hmm_models[true_type].fish_list.append(fish_id)
 
         #Add fish to its model, update model
         self.hmm_models[true_type].fish_list.append(fish_id)
