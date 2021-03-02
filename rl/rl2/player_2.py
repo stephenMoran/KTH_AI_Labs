@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import random
 import numpy as np
+import math
 
 from agent import Fish
 from communicator import Communicator
@@ -196,7 +197,7 @@ class PlayerControllerRL(PlayerController, FishesModelling):
                 # Chose an action from all possible actions
                 #Get the action with highest Q-value
                 
-                max_q = 0
+                max_q = -math.inf
                 action = -1
                 for i in list_pos:
                     if Q[s_current, i] > max_q:
@@ -231,7 +232,7 @@ class PlayerControllerRL(PlayerController, FishesModelling):
                 #lr is the learning rate, discount the discount factor
                 #Q(s_next, a) for every a
                 #Q(s_current, action)
-                max_q = 0
+                max_q = -math.inf
                 max_ind = -1
                 pos_mov_s_next = self.allowed_moves[s_next]
                 for a in pos_mov_s_next:
