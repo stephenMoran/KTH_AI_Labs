@@ -12,10 +12,10 @@ frames_per_second: 10000
 player_type: "ai_rl"
 
 ## Q learning learning rate
-alpha: 0.1
+alpha: 0.8
 
 ## Q learning discount rate
-gamma: 0.1
+gamma: 1
 
 # Disables the graphical engine of the simulator (true by default)
 headless: true
@@ -53,7 +53,7 @@ stoch: false
 episode_len: 100
 
 # Max episodes
-episode_max: 1000
+episode_max: 10000
 
 # Visualize exploration (slow, just for debugging)
 visualize_exploration: true
