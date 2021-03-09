@@ -53,7 +53,7 @@ stoch: false
 episode_len: 100
 
 # Max episodes
-episode_max: 100
+episode_max: 10
 
 # Visualize exploration (slow, just for debugging)
 visualize_exploration: true

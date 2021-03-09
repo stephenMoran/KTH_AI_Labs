@@ -7,10 +7,10 @@ from fishing_game_core.shared import ACTION_TO_STR
 
 class MinimaxModel(object): 
     def __init__(self, initial_data): 
-        self.get_fish_scores_and_types(initial_data)
+        #self.get_fish_scores_and_types(initial_data)
         self.max_time =  0.060
         self.states = {}
-        return None
+        #return None
 
     def get_fish_scores_and_types(self, initial_data):
         '''
@@ -35,7 +35,7 @@ class MinimaxModel(object):
         print(self.fishes)
         '''
 
-    def next_move(self, root_node, max_depth=7): 
+    def next_move(self, root_node, max_depth=15): 
         self.start = time.time()
         alpha = -math.inf
         beta = math.inf
@@ -120,7 +120,7 @@ class MinimaxModel(object):
         fs = str(state.fish_scores)
         hp = (str(state.hook_positions[0]) + str(state.hook_positions[1]))#.translate(str.maketrans('', '', string.punctuation+" "))
         sc = (str(state.player_scores[0]) + str(state.player_scores[1])).translate(str.maketrans('', '', string.punctuation))
-        pt = '_' + str(state.player)
+        #pt = '_' + str(state.player)
         return (fp + hp + fs + sc + pt)
 
 
@@ -172,7 +172,9 @@ class MinimaxModel(object):
 
             #val += fish_scores[fish] / (proximity + 1)
 
-            val = max(val, fish_scores[fish]/math.exp(proximity))
+            val += fish_scores[fish]/math.exp(proximity)
+            #val = max(val, fish_scores[fish]/math.exp(proximity))
+
             #val += fish_scores[fish] - proximity#/math.exp(proximity)
             #val += math.exp(proximity)
             

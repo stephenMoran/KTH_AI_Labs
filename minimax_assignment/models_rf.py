@@ -18,7 +18,7 @@ class MinimaxModel(object):
         scores_to_type = {s:t for t, s in enumerate(set(self.fish_scores.values()))}
         self.fish_types = {f:scores_to_type[s] for f, s in self.fish_scores.items()}
 
-    def next_move(self, root_node, max_depth=7): 
+    def next_move(self, root_node, max_depth=8): 
         self.start = time.time()
         alpha = -math.inf
         beta = math.inf

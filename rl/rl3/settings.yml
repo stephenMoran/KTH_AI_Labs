@@ -12,10 +12,10 @@ frames_per_second: 10000
 player_type: "ai_rl"
 
 ## Q learning learning rate
-alpha: 0.8
+alpha: 0.0001
 
 ## Q learning discount rate
-gamma: 1
+gamma: 0.1
 
 # Disables the graphical engine of the simulator (true by default)
 headless: true

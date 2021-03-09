@@ -385,6 +385,7 @@ class PlayerControllerRandom(PlayerController):
         assert nan_max_actions_proxy.all() == nan_max_actions_proxy.all()
 
         policy = {}
+        
         list_actions = list(self.actions.keys())
         for n in self.state2ind.keys():
             state_tuple = self.state2ind[n]
