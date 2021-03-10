@@ -130,13 +130,12 @@ class MinimaxModel(object):
 
 #HEURISTICS
     def compute_heuristic(self, node): 
-        #Container function
         return self.heur_1(node.state)
 
     def man_distance(self, fish, hook):
-        #Function to compute a slightly modified manhattan distance
         x = min(abs(fish[0] - hook[0]), 20-abs(fish[0]-hook[0]))
-        y = abs(hook[1] - fish[1]) + (20-(fish[1])) #Add the y to go back from the fish to the boat
+        y = abs(hook[1] - fish[1])# + (20-(fish[1])) #Add the y to go back from the fish to the boat
+        #add in influence of other ship i.e. go for fish that you can reach before them 
         return x + y
 
     def heur_1(self, node):
@@ -146,6 +145,7 @@ class MinimaxModel(object):
         fish_scores = node.fish_scores
         n_fish = len(fish)
 
+        #Hook positions and difference in score of the two players
         hook_p1, hook_p2 = node.get_hook_positions().values()
         scores_diff = player_scores[0] - player_scores[1]
 
@@ -154,41 +154,29 @@ class MinimaxModel(object):
             return scores_diff
 
         #Evaluate distance for every fish
-        val = -math.inf
+        val = 0
         for fish, pos in fish.items():
-            #Get distance from our hook to the fish
             proximity = self.man_distance(pos, hook_p1)
+            #Check distance
 
-            #If I'm closer to the fish than hook_p2 and score_diff is positive, go for it
-            #proximity_p2 = self.man_distance(pos, hook_p2)
+            #IF Hook is one the fish and last fish remaining, go for it
+            if proximity == 0 and n_fish == 1: return math.inf
 
-            #If hook is on the fish and last fish remaning, go for it
-            if proximity == (20-pos[1]) and n_fish == 1: return math.inf
+            val += fish_scores[fish]/math.exp(proximity)
+            #val = max(val, fish_scores[fish]/math.exp(proximity))
 
             '''
             #val = max(val, 1/(abs(proximity-proximity_p2)+1))
-
             #val = max(val, 1/proximity)
-
             #print(f"Proximity: {proximity}, Score: {fish_scores[fish]}")
             #Else, most valuable fish, scaled by the distance
-
             #val += fish_scores[fish] / (proximity + 1)
-            '''
-
-            #
-            #val += fish_scores[fish]/math.exp(proximity)
-            val = max(val, fish_scores[fish]/math.exp(proximity))
-
             #val += fish_scores[fish] - proximity#/math.exp(proximity)
             #val += math.exp(proximity)
+            '''
             
 
         #Linear combination of val and scores difference
-        '''
-        print("Scores diff: ", scores_diff)
-        print("Value: ", val)
-        '''
         return val + (scores_diff)
 
 def sign(x):
