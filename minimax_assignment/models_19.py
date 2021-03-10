@@ -45,7 +45,7 @@ class MinimaxModel(object):
                     best_value = value
                     best_move = a.move
                     alpha = value
-            
+
             #save the best move at each depth
             best_moves[depth] = (best_value, best_move)
             depth += 1
@@ -63,7 +63,7 @@ class MinimaxModel(object):
         #get hash key
         key = self.hash_funct(node.state)
         #check if its been seen before
-        if key in self.states and self.states[key][0] >= depth:
+        if key in self.states:
             return self.states[key][1]
         #get actions for this state
         actions = node.compute_and_get_children()
@@ -75,13 +75,15 @@ class MinimaxModel(object):
             return self.compute_heuristic(node)
         else: 
             for a in actions:
-                value = max(value, self.min_value(depth - 1, a, alpha, beta))               
+                value = max(value, self.min_value(depth - 1, a, alpha, beta))    
+                #if the new value is greater than beta we can break as we know that min wont choose this so we can break            
                 if value >= beta: 
                     break
+                #if this value is greater than the current alpha update
                 alpha = max(alpha,value)
                 if time.time() - self.start > self.max_time:
                     break
-
+        #save current depth and value
         self.states[key] = [depth,value]
         return value
         
@@ -89,7 +91,7 @@ class MinimaxModel(object):
         #get hash key
         key = self.hash_funct(node.state)
         #check if its been seen before
-        if key in self.states and self.states[key][0] >= depth:
+        if key in self.states:
           return self.states[key][1]
         #get actions for this state
         actions = node.compute_and_get_children()
@@ -109,6 +111,7 @@ class MinimaxModel(object):
                 beta = min(beta,value)
                 if time.time() - self.start > self.max_time:
                     break
+        #save current depth and value
         self.states[key] = [depth,value]
         return value
 
