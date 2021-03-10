@@ -13,33 +13,40 @@ class MinimaxModel(object):
         #return None
 
     def next_move(self, root_node, max_depth=math.inf): 
+        #start the timer
         self.start = time.time()
+        #initialise beta and alpha
         alpha = -math.inf
         beta = math.inf
         self.max_depth = max_depth
         self.max_player = root_node.state.player
         depth = 0
+        #possible actions at root node
         actions = root_node.compute_and_get_children()
-        #best_value = 0
         best_move = 0
         best_moves = {}
+        #continue iterative minmax until time is out
         while (time.time() < self.start + self.max_time):
             best_value = -math.inf
+            alpha = -math.inf
+            beta = math.inf
             for a in actions: 
-                
+                #save current state
                 key = self.hash_funct(a.state)
+                #check if state has been seen before
                 if key in self.states:
                     value = self.states[key][1]
                 else:
+                    #call min value as max player goes first
                     value = self.min_value(depth, a, alpha, beta)
-                
-                #value = self.min_value(depth, a, alpha, beta)
 
+                #check if new vlaue is better than the last
                 if value > best_value: 
                     best_value = value
                     best_move = a.move
                     alpha = value
             
+            #save the best move at each depth
             best_moves[depth] = (best_value, best_move)
             depth += 1
 
@@ -47,17 +54,23 @@ class MinimaxModel(object):
             optimal_index = max(best_moves, key=best_moves.get)
             optimal_action = best_moves[optimal_index][1]
             '''
-            
+            #return the best action
             optimal_action = best_move
         return ACTION_TO_STR[optimal_action]
 
+
     def max_value(self, depth, node, alpha=-math.inf, beta=math.inf): 
+        #get hash key
         key = self.hash_funct(node.state)
+        #check if its been seen before
         if key in self.states and self.states[key][0] >= depth:
             return self.states[key][1]
+        #get actions for this state
         actions = node.compute_and_get_children()
+        #try the moves which are likely the best moves first
         actions.sort(key=self.compute_heuristic, reverse = True)
         value = -math.inf
+        #if terminal state reached - compute heuristic
         if depth == 0 or (len(actions) == 0): 
             return self.compute_heuristic(node)
         else: 
@@ -73,20 +86,26 @@ class MinimaxModel(object):
         return value
         
     def min_value(self, depth, node, alpha=0, beta=0):
+        #get hash key
         key = self.hash_funct(node.state)
+        #check if its been seen before
         if key in self.states and self.states[key][0] >= depth:
           return self.states[key][1]
+        #get actions for this state
         actions = node.compute_and_get_children()
         value = math.inf
-        actions.sort(key=self.compute_heuristic, reverse = True)
+        #try the moves which are likely the best moves first
+        actions.sort(key=self.compute_heuristic, reverse = False)
+        #if terminal state reached - compute heuristic
         if depth == 0 or (len(actions) == 0): 
             return self.compute_heuristic(node)
         else: 
             for a in actions: 
-                #print("Value: ", value)
-                value = min(value, self.max_value(depth - 1, a, alpha, beta))          
+                value = min(value, self.max_value(depth - 1, a, alpha, beta))     
+                #if the new value is less than alpha we can break as we know that max wont choose this so we can break     
                 if value <= alpha: 
                     break
+                #update beta if new value is lower than current beta
                 beta = min(beta,value)
                 if time.time() - self.start > self.max_time:
                     break
