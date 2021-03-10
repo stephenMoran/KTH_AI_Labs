@@ -8,34 +8,11 @@ from fishing_game_core.shared import ACTION_TO_STR
 class MinimaxModel(object): 
     def __init__(self, initial_data): 
         #self.get_fish_scores_and_types(initial_data)
-        self.max_time =  0.060
+        self.max_time =  0.058
         self.states = {}
         #return None
 
-    def get_fish_scores_and_types(self, initial_data):
-        '''
-        Sample initial data:
-        { 'fish0': {'score': 11, 'type': 3}, 
-          'fish1': {'score': 2, 'type': 1}, 
-          ...
-          'fish5': {'score': -10, 'type': 4},
-          'game_over': False }
-        '''
-        '''
-        self.fish_scores = {}
-        for f in initial_data:
-            #Check if fish
-            
-            if f[:4] == 'fish':
-                fish_n = f[4:]
-                el = {int(fish_n):initial_data[f]['score']}
-                self.fish_scores[fish_n] = el
-        '''
-        '''
-        print(self.fishes)
-        '''
-
-    def next_move(self, root_node, max_depth=15): 
+    def next_move(self, root_node, max_depth=math.inf): 
         self.start = time.time()
         alpha = -math.inf
         beta = math.inf
@@ -49,11 +26,14 @@ class MinimaxModel(object):
         while (time.time() < self.start + self.max_time):
             best_value = -math.inf
             for a in actions: 
+                
                 key = self.hash_funct(a.state)
                 if key in self.states:
                     value = self.states[key][1]
                 else:
                     value = self.min_value(depth, a, alpha, beta)
+                
+                #value = self.min_value(depth, a, alpha, beta)
 
                 if value > best_value: 
                     best_value = value
@@ -71,7 +51,7 @@ class MinimaxModel(object):
             optimal_action = best_move
         return ACTION_TO_STR[optimal_action]
 
-    def max_value(self, depth, node, alpha=0, beta=0): 
+    def max_value(self, depth, node, alpha=-math.inf, beta=math.inf): 
         key = self.hash_funct(node.state)
         if key in self.states and self.states[key][0] >= depth:
             return self.states[key][1]
@@ -155,7 +135,7 @@ class MinimaxModel(object):
             return scores_diff
 
         #Evaluate distance for every fish
-        val = 0
+        val = -math.inf
         for fish, pos in fish.items():
             #Get distance from our hook to the fish
             proximity = self.man_distance(pos, hook_p1)
@@ -178,8 +158,8 @@ class MinimaxModel(object):
             '''
 
             #
-            val += fish_scores[fish]/math.exp(proximity)
-            #val = max(val, fish_scores[fish]/math.exp(proximity))
+            #val += fish_scores[fish]/math.exp(proximity)
+            val = max(val, fish_scores[fish]/math.exp(proximity))
 
             #val += fish_scores[fish] - proximity#/math.exp(proximity)
             #val += math.exp(proximity)
